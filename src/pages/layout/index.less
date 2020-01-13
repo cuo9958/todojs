@@ -1,0 +1,48 @@
+@left-width: 210px; //框架左侧的宽度
+
+#main {
+    .nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: solid 1px #eff2f7;
+        box-shadow: 0 5px 10px 1px rgba(200, 200, 200, 0.5);
+    }
+    #logo {
+        height: 40px;
+        color: #333;
+        padding: 0 10px;
+        background: #fff;
+        font-size: 14px;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+
+        img {
+            height: 37px;
+            margin-right: 10px;
+        }
+    }
+
+    .top_menus {
+        flex: 1;
+        padding: 10px;
+        height: 40px;
+        font-size: 12px;
+        background: white;
+        z-index: 1;
+
+        .el-dropdown {
+            cursor: pointer;
+            font-size: 12px;
+        }
+    }
+    .height40 {
+        height: 30px;
+    }
+    .continer {
+        margin: 0 auto;
+        width: 1200px;
+        padding: 5px 10px 10px;
+    }
+}

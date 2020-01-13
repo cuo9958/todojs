@@ -1,0 +1,14 @@
+{
+    "apps": [
+        {
+            "name": "todo_list@18612",
+            "script": "server/index.js",
+            "args": [],
+            "env": {
+                "PORT": "18612",
+                "NODE_ENV": "development",
+                "SERVER_ENV": "dev"
+            }
+        }
+    ]
+}
