@@ -1,8 +1,26 @@
 import React from "react";
-import { Table, Pagination, Button, Input, Message } from "element-react";
+import { Table, Pagination, Button, Input, Message, Dialog, DatePicker, Select, Form } from "element-react";
 import "./index.less";
 import request from "../../services/request";
-import sdk from "../../services/sdk";
+import utils from "../../services/utils";
+
+const time_list: string[] = [];
+
+for (let i = 8; i < 24; i++) {
+    const inn = (i + "").padStart(2, "0");
+    time_list.push(inn + ":00");
+    time_list.push(inn + ":30");
+}
+
+interface IForm {
+    [index: string]: any;
+    id: number;
+    title: string;
+    last_date: Date;
+    to_type: number;
+    last_time: string;
+    to_count: number;
+}
 
 interface iState {
     [index: string]: any;
@@ -10,6 +28,9 @@ interface iState {
     list: any[];
     count: number;
     title: string;
+    isShow: boolean;
+    tmp_time: Date;
+    form: IForm;
 }
 
 export default class extends React.Component<any, iState> {
@@ -18,7 +39,17 @@ export default class extends React.Component<any, iState> {
         this.state = {
             list: [],
             count: 0,
-            title: ""
+            title: "",
+            isShow: false,
+            tmp_time: new Date(),
+            form: {
+                id: 0,
+                title: "",
+                last_date: new Date(),
+                last_time: "08:00",
+                to_type: 0,
+                to_count: 1
+            }
         };
     }
     columns = [
@@ -33,26 +64,30 @@ export default class extends React.Component<any, iState> {
         },
         {
             label: "通知日期",
-            prop: "cron",
+            prop: "last_date",
+            width: 160,
             render: (row: any) => {
                 return (
                     <div>
-                        <div>{row.cron}</div>
+                        {row.last_date}&nbsp;
+                        {row.last_time}
                     </div>
                 );
             }
         },
         {
-            label: "类型",
-            prop: "task_type",
-            width: 120
+            label: "次数",
+            prop: "to_count",
+            width: 70
         },
         {
-            label: "状态",
-            prop: "status",
-            width: 120,
+            label: "程度",
+            prop: "to_type",
+            width: 70,
             render: (row: any) => {
-                return row.status === 0 ? "未使用" : "进行中";
+                if (row.to_type === 0) return "一般";
+                if (row.to_type === 1) return "重要";
+                if (row.to_type === 2) return "紧急";
             }
         },
         {
@@ -66,12 +101,12 @@ export default class extends React.Component<any, iState> {
                         </Button>
                         {row.status === 0 && (
                             <Button onClick={() => this.updateStatus(row.id, 1)} type="success" size="small">
-                                启动
+                                开始
                             </Button>
                         )}
                         {row.status === 1 && (
                             <Button onClick={() => this.updateStatus(row.id, 0)} type="warning" size="small">
-                                停止
+                                暂停
                             </Button>
                         )}
                         <Button onClick={() => this.del(row.id)} type="danger" size="small">
@@ -86,7 +121,7 @@ export default class extends React.Component<any, iState> {
         return (
             <div id="tasks">
                 <div className="search-box">
-                    <Input className="input_s" value={this.state.title} onChange={value => this.handleChange("title", value)} placeholder="请输入"></Input>
+                    <Input className="input_s" value={this.state.title} onChange={(value: any) => this.updateTitle(value)} placeholder="请输入"></Input>
                     <Button className="search_btn" type="primary" icon="search" onClick={this.handleClick}>
                         搜索
                     </Button>
@@ -98,6 +133,55 @@ export default class extends React.Component<any, iState> {
                 <div className="foot">
                     <Pagination onCurrentChange={this.onCurrentChange} layout="prev, pager, next" pageSize={20} small={true} total={this.state.count} />
                 </div>
+                <Dialog title="TODO" size="small" visible={this.state.isShow} onCancel={() => this.setState({ isShow: false })}>
+                    <Dialog.Body>
+                        <Form>
+                            <Form.Item>
+                                <Input value={this.state.form.title} placeholder="请输入内容" onChange={e => this.onFormChange("title", e)} />
+                            </Form.Item>
+                        </Form>
+                        <Form inline={true}>
+                            <Form.Item>
+                                <DatePicker
+                                    value={this.state.form.last_date}
+                                    placeholder="选择日期"
+                                    onChange={date => this.onFormChange("last_date", date)}
+                                    disabledDate={(time: Date) => time.getTime() < Date.now() - 8.64e7}
+                                />
+                            </Form.Item>
+                            <Form.Item>
+                                <Select value={this.state.form.last_time} placeholder="提醒时间" onChange={e => this.onFormChange("last_time", e)}>
+                                    {time_list.map((time, index) => (
+                                        <Select.Option key={index} value={time} label={time} />
+                                    ))}
+                                </Select>
+                            </Form.Item>
+                        </Form>
+                        <Form inline={true}>
+                            <Form.Item>
+                                <Select value={this.state.form.to_type + ""} placeholder="紧急程度" onChange={e => this.onFormChange("to_type", e * 1)}>
+                                    <Select.Option value="0" label="一般" />
+                                    <Select.Option value="1" label="重要" />
+                                    <Select.Option value="2" label="紧急" />
+                                </Select>
+                            </Form.Item>
+                            <Form.Item>
+                                <Select value={this.state.form.to_count + ""} placeholder="提醒次数" onChange={e => this.onFormChange("to_count", e * 1)}>
+                                    <Select.Option value="1" label="1次" />
+                                    <Select.Option value="2" label="2次" />
+                                    <Select.Option value="3" label="3次" />
+                                </Select>
+                            </Form.Item>
+                        </Form>
+                        <Form>
+                            <Form.Item>
+                                <Button className="btn_full" type="primary" onClick={() => this.addTodo()}>
+                                    确定
+                                </Button>
+                            </Form.Item>
+                        </Form>
+                    </Dialog.Body>
+                </Dialog>
             </div>
         );
     }
@@ -112,11 +196,10 @@ export default class extends React.Component<any, iState> {
             this.pageIndex = pageIndex;
         }
         try {
-            const data = await request.get(
-                `/task/list?pageIndex=${this.pageIndex}&title=${this.state.title}&platform=${this.state.clientSelect.value}&status=${
-                    this.state.statusSelect.value > 1 ? "" : this.state.statusSelect.value
-                }`
-            );
+            const data = await request.get("/task/list", {
+                pageIndex: this.pageIndex,
+                title: this.state.title
+            });
             this.setState({
                 list: data.rows,
                 count: data.count
@@ -127,35 +210,86 @@ export default class extends React.Component<any, iState> {
     }
 
     // 搜索框
-    handleChange = (key: string, value: any) => {
+    updateTitle = (value: string) => {
         this.setState({
-            ...this.state,
-            [key]: value
+            title: value
         });
     };
 
     // 搜索框
     handleClick = () => {
-        if (!this.state.title) {
-            Message({
-                message: "请输入任务标题",
-                type: "warning"
-            });
-        }
-
         this.getList(1);
     };
-
+    /**
+     * 弹层添加todo的对象
+     * @param k k
+     * @param v v
+     */
+    onFormChange(k: string, v: any) {
+        const model = this.state.form;
+        model[k] = v;
+        this.setState({ form: model });
+    }
+    /**
+     * 打开添加弹层
+     */
     addClick() {
-       
+        this.setState({ isShow: true });
+    }
+    /**
+     * 清理弹层数据
+     */
+    clearForm() {
+        this.setState({
+            isShow: false,
+            form: {
+                id: 0,
+                title: "",
+                last_date: new Date(),
+                last_time: "08:30",
+                to_count: 1,
+                to_type: 0
+            }
+        });
+    }
+    /**
+     * 添加一行todo内容
+     */
+    async addTodo() {
+        const model = Object.assign(this.state.form);
+        model.last_date = utils.DateFormart(model.last_date, "yyyy-MM-dd");
+        console.log("todo", model);
+        try {
+            await request.post("/task/detail", model);
+            Message.success("添加成功");
+            this.clearForm();
+            this.getList();
+        } catch (error) {
+            console.log(error);
+            Message.error(error.message);
+        }
     }
 
-    edit(id: number) {
-       
+    async edit(id: number) {
+        try {
+            const data = await request.get("/task/detail", { id });
+            this.setState({
+                isShow: true,
+                form: {
+                    id,
+                    title: data.title,
+                    last_time: data.last_time,
+                    last_date: new Date(data.last_date),
+                    to_count: data.to_count,
+                    to_type: data.to_type
+                }
+            });
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     async updateStatus(id: number, status: number) {
-        if (!sdk.check("app_task_task_status")) return;
         try {
             await request.post("/task/status", { id, status });
             this.getList();
@@ -168,7 +302,6 @@ export default class extends React.Component<any, iState> {
     }
 
     async del(id: number) {
-        if (!sdk.check("app_task_task_del")) return;
         try {
             await request.post("/task/del", { id });
             this.getList();

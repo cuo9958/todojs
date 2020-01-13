@@ -21,6 +21,9 @@ export default {
     parseParams(url: string) {
         return urlParse(url, true);
     },
+    DateFormart: (ts: Date, formart = "yyyy-MM-dd hh:mm:ss") => {
+        return DateFormart(ts, formart);
+    },
     DateFormartNumber: (ts: number, formart = "yyyy-MM-dd hh:mm:ss") => {
         if (!ts || isNaN(ts)) return "";
         const time = new Date(ts);

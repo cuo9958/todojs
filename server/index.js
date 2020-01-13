@@ -14,9 +14,11 @@ app.use(
     })
 );
 
+const task = require("./api/task");
 const test = require("./api/index");
 
-router.use("/api_task/test", test.routers);
+router.use("/api_todo/task", task.routers);
+router.use("/api_todo/test", test.routers);
 
 app.use(router.routes()).use(router.allowedMethods());
 
