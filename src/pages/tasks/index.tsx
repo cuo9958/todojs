@@ -54,7 +54,7 @@ export default class extends React.Component<any, iState> {
                 to_type: 0,
                 to_count: 1,
                 tell: info.tell || "",
-                isAll: true
+                isAll: false
             }
         };
     }
