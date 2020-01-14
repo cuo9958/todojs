@@ -3,9 +3,9 @@ const utils = require("./utils");
 const TaskModel = require("../models/tasks");
 const DDService = require("./dingding");
 
-new CronJob("* 0 * * * *", runTask("00")).start();
-new CronJob("* 30 * * * *", runTask("30")).start();
-new CronJob("* */1 * * * *", other).start();
+new CronJob("0 0 * * * *", runTask("00")).start();
+new CronJob("0 30 * * * *", runTask("30")).start();
+new CronJob("0 */1 * * * *", other).start();
 
 let Task_list = [];
 
