@@ -14,7 +14,8 @@ const DDConfig = config.get("dingding");
 function createMsg(t = "text", opts = {}) {
     if (t === "text") {
         const lastP = [];
-        if (opts.tell.constructor === Array) {
+        const isAll = !!opts.isAll;
+        if (!isAll && opts.tell.constructor === Array) {
             opts.tell.forEach(item => {
                 lastP.push("@" + item);
             });
@@ -26,7 +27,7 @@ function createMsg(t = "text", opts = {}) {
             },
             at: {
                 atMobiles: opts.tell || [],
-                isAtAll: !!opts.isAll
+                isAtAll: isAll
             }
         };
     }
