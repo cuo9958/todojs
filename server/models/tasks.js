@@ -12,6 +12,7 @@ const Tasks = db.define(
         },
         title: {
             type: Sequelize.STRING(100),
+            defaultValue: "",
             comment: "任务标题"
         },
         last_date: {
@@ -33,6 +34,11 @@ const Tasks = db.define(
             type: Sequelize.TINYINT,
             defaultValue: 0,
             comment: "重要程度"
+        },
+        tell: {
+            type: Sequelize.STRING,
+            defaultValue: "",
+            comment: "任务标题"
         },
         username: {
             type: Sequelize.STRING(50),
@@ -96,5 +102,17 @@ module.exports = {
         }).then(function(res) {
             return res.destroy();
         });
+    },
+    search(last_date, last_time) {
+        let config = {
+            order: [["id", "desc"]],
+            attributes: ["id", "title", "to_type", "to_count", "tell"],
+            where: {
+                last_date,
+                last_time,
+                status: 1
+            }
+        };
+        return Tasks.findAll(config);
     }
 };

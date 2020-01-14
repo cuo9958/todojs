@@ -39,7 +39,7 @@ router.get("/detail", async function(ctx, next) {
     }
 });
 router.post("/detail", async function(ctx, next) {
-    const { id, title, last_date, last_time, to_type, to_count } = ctx.request.body;
+    const { id, title, last_date, last_time, to_type, to_count, tell } = ctx.request.body;
     const username = ctx.headers.username;
     try {
         const model = {
@@ -48,6 +48,7 @@ router.post("/detail", async function(ctx, next) {
             last_date,
             last_time,
             to_type,
+            tell,
             to_count
         };
         if (id && id > 0) {

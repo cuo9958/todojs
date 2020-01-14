@@ -2,6 +2,8 @@ const Koa = require("koa");
 const Router = require("koa-router");
 const KoaBody = require("koa-body");
 
+require("./services/tasks");
+
 const app = new Koa();
 const router = new Router();
 

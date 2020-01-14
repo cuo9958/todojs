@@ -20,6 +20,7 @@ interface IForm {
     to_type: number;
     last_time: string;
     to_count: number;
+    tell: string;
 }
 
 interface iState {
@@ -48,7 +49,8 @@ export default class extends React.Component<any, iState> {
                 last_date: new Date(),
                 last_time: "08:00",
                 to_type: 0,
-                to_count: 1
+                to_count: 1,
+                tell: ""
             }
         };
     }
@@ -129,7 +131,7 @@ export default class extends React.Component<any, iState> {
                         新建
                     </Button>
                 </div>
-                <Table style={{ width: "100%" }} columns={this.columns} data={this.state.list} border={true} />
+                <Table rowClassName={this.rowClassName.bind(this)} style={{ width: "100%" }} columns={this.columns} data={this.state.list} border={true} />
                 <div className="foot">
                     <Pagination onCurrentChange={this.onCurrentChange} layout="prev, pager, next" pageSize={20} small={true} total={this.state.count} />
                 </div>
@@ -175,6 +177,9 @@ export default class extends React.Component<any, iState> {
                         </Form>
                         <Form>
                             <Form.Item>
+                                <Input value={this.state.form.tell} placeholder="@手机号,分割.ex:156xxxx,132xxxxx" onChange={e => this.onFormChange("tell", e)} />
+                            </Form.Item>
+                            <Form.Item>
                                 <Button className="btn_full" type="primary" onClick={() => this.addTodo()}>
                                     确定
                                 </Button>
@@ -189,7 +194,11 @@ export default class extends React.Component<any, iState> {
     componentDidMount() {
         this.getList();
     }
-
+    rowClassName(row: any) {
+        if (row.status === 0) return "pause";
+        if (row.status === 1) return "runing";
+        return "";
+    }
     pageIndex = 1;
     async getList(pageIndex?: number) {
         if (pageIndex && !isNaN(pageIndex)) {
@@ -248,7 +257,8 @@ export default class extends React.Component<any, iState> {
                 last_date: new Date(),
                 last_time: "08:30",
                 to_count: 1,
-                to_type: 0
+                to_type: 0,
+                tell: ""
             }
         });
     }
@@ -281,7 +291,8 @@ export default class extends React.Component<any, iState> {
                     last_time: data.last_time,
                     last_date: new Date(data.last_date),
                     to_count: data.to_count,
-                    to_type: data.to_type
+                    to_type: data.to_type,
+                    tell: data.tell
                 }
             });
         } catch (error) {

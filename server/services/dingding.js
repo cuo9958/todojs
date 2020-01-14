@@ -48,13 +48,21 @@ function msgAction(t, data) {
         method: "POST",
         url: DDConfig.url,
         data: createMsg(t, data)
-    });
+    })
+        .then(res => {
+            console.log(res.data);
+        })
+        .catch(err => {
+            console.log(err);
+        });
 }
 
 module.exports = {
-    msgTo(msg, tel) {
+    msgTo(msg, tell, isAll) {
         msgAction("text", {
-            msg
+            msg,
+            tell,
+            isAll
         });
     },
     msgLinkTo(title, msg, img, link) {
