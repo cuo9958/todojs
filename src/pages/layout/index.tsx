@@ -42,6 +42,7 @@ export default class extends React.Component<iProps, iState> {
                             <a href="/"> TodoJS v1.0</a>
                         </div>
                         <div className="top_menus flex-right">
+                            <div>设置</div>
                             {this.props.nickname && (
                                 <Dropdown
                                     trigger="click"

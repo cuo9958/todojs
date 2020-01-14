@@ -15,8 +15,10 @@ app.use(
 );
 
 const task = require("./api/task");
+const setting = require("./api/setting");
 const test = require("./api/index");
 
+router.use("/api_todo/setting", setting.routers);
 router.use("/api_todo/task", task.routers);
 router.use("/api_todo/test", test.routers);
 
