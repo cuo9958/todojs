@@ -1,8 +1,9 @@
 import React from "react";
-import { Table, Pagination, Button, Input, Message, Dialog, DatePicker, Select, Form } from "element-react";
+import { Table, Pagination, Button, Input, Message, Dialog, DatePicker, Select, Form, Checkbox } from "element-react";
 import "./index.less";
 import request from "../../services/request";
 import utils from "../../services/utils";
+import SDK from "../../services/sdk";
 
 const time_list: string[] = [];
 
@@ -21,6 +22,7 @@ interface IForm {
     last_time: string;
     to_count: number;
     tell: string;
+    isAll?: boolean;
 }
 
 interface iState {
@@ -37,6 +39,7 @@ interface iState {
 export default class extends React.Component<any, iState> {
     constructor(props: any) {
         super(props);
+        const info = SDK.info();
         this.state = {
             list: [],
             count: 0,
@@ -50,7 +53,8 @@ export default class extends React.Component<any, iState> {
                 last_time: "08:00",
                 to_type: 0,
                 to_count: 1,
-                tell: ""
+                tell: info.tell || "",
+                isAll: true
             }
         };
     }
@@ -174,10 +178,20 @@ export default class extends React.Component<any, iState> {
                                     <Select.Option value="3" label="3次" />
                                 </Select>
                             </Form.Item>
+                            <Form.Item>
+                                <Checkbox onChange={e => this.onFormChange("isAll", e)} checked={this.state.form.isAll}>
+                                    通知所有人
+                                </Checkbox>
+                            </Form.Item>
                         </Form>
                         <Form>
                             <Form.Item>
-                                <Input value={this.state.form.tell} placeholder="@手机号,分割.ex:156xxxx,132xxxxx" onChange={e => this.onFormChange("tell", e)} />
+                                <Input
+                                    disabled={this.state.form.isAll}
+                                    value={this.state.form.tell}
+                                    placeholder="提醒人手机号,分割.ex:156xxxx,132xxxxx"
+                                    onChange={e => this.onFormChange("tell", e)}
+                                />
                             </Form.Item>
                             <Form.Item>
                                 <Button className="btn_full" type="primary" onClick={() => this.addTodo()}>
@@ -268,6 +282,9 @@ export default class extends React.Component<any, iState> {
     async addTodo() {
         const model = Object.assign(this.state.form);
         model.last_date = utils.DateFormart(model.last_date, "yyyy-MM-dd");
+        if (model.isAll) {
+            model.tell = "";
+        }
         console.log("todo", model);
         try {
             await request.post("/task/detail", model);

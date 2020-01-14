@@ -35,6 +35,11 @@ const Tasks = db.define(
             defaultValue: 0,
             comment: "重要程度"
         },
+        is_all: {
+            type: Sequelize.TINYINT,
+            defaultValue: 0,
+            comment: "状态;0:不是所有;1:所有"
+        },
         tell: {
             type: Sequelize.STRING,
             defaultValue: "",
@@ -105,7 +110,7 @@ module.exports = {
     search(last_date, last_time) {
         let config = {
             order: [["id", "desc"]],
-            attributes: ["id", "title", "to_type", "to_count", "tell"],
+            attributes: ["id", "title", "to_type", "to_count", "tell", "is_all"],
             where: {
                 last_date,
                 last_time,

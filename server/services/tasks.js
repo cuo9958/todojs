@@ -18,12 +18,13 @@ function runTask(ext) {
         const list = await TaskModel.search(day, last_time);
         console.log(day, last_time);
         list.forEach(item => {
-            DDService.msgTo(item.title, item.tell.split(","));
+            DDService.msgTo(item.title, item.tell.split(","), item.is_all);
             if (item.to_count > 1) {
                 Task_list.push({
                     title: item.title,
                     tell: item.tell,
-                    count: item.to_count - 1
+                    count: item.to_count - 1,
+                    is_all: item.is_all
                 });
             }
         });
@@ -33,7 +34,7 @@ function runTask(ext) {
 function other() {
     const list = [];
     Task_list.forEach(item => {
-        DDService.msgTo(item.title, item.tell.split(","));
+        DDService.msgTo(item.title, item.tell.split(","), item.is_all);
         if (item.count > 1) {
             item.count--;
             list.push(item);

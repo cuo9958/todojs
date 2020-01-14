@@ -47,7 +47,7 @@ router.get("/detail", async function(ctx, next) {
     }
 });
 router.post("/detail", valide, async function(ctx, next) {
-    const { id, title, last_date, last_time, to_type, to_count, tell } = ctx.request.body;
+    const { id, title, last_date, last_time, to_type, to_count, tell, isAll } = ctx.request.body;
     const username = ctx.headers.username;
 
     try {
@@ -58,7 +58,8 @@ router.post("/detail", valide, async function(ctx, next) {
             last_time,
             to_type,
             tell,
-            to_count
+            to_count,
+            is_all: isAll ? 1 : 0
         };
         if (id && id > 0) {
             await TaskModel.update(model, id);
