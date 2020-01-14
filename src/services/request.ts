@@ -81,7 +81,7 @@ class Request {
         if (info) {
             headers["uid"] = info.uid;
             headers["token"] = info.token;
-            headers["nickname"] = encodeURIComponent(info.nickname);
+            headers["username"] = info.username;
         }
         return headers;
     }

@@ -17,9 +17,9 @@ router.all("/", function(ctx, next) {
 
 router.get("/list", async function(ctx, next) {
     const { pageIndex, title } = ctx.query;
-    const nickname = decodeURIComponent(ctx.headers.nickname);
+    const username = ctx.headers.username;
     try {
-        const data = await TaskModel.getCount(pageIndex, title, nickname);
+        const data = await TaskModel.getCount(pageIndex, title, username);
         ctx.body = {
             code: 1,
             data
@@ -48,12 +48,12 @@ router.get("/detail", async function(ctx, next) {
 });
 router.post("/detail", valide, async function(ctx, next) {
     const { id, title, last_date, last_time, to_type, to_count, tell } = ctx.request.body;
-    const nickname = decodeURIComponent(ctx.headers.nickname);
+    const username = ctx.headers.username;
 
     try {
         const model = {
             title,
-            nickname,
+            username,
             last_date,
             last_time,
             to_type,
@@ -94,9 +94,9 @@ router.post("/status", async function(ctx, next) {
 });
 router.post("/del", async function(ctx, next) {
     const { id } = ctx.request.body;
-    const nickname = decodeURIComponent(ctx.headers.nickname);
+    const username = ctx.headers.username;
     try {
-        await TaskModel.del(id, nickname);
+        await TaskModel.del(id, username);
         ctx.body = {
             code: 1
         };
