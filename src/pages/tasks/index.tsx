@@ -309,7 +309,8 @@ export default class extends React.Component<any, iState> {
                     last_date: new Date(data.last_date),
                     to_count: data.to_count,
                     to_type: data.to_type,
-                    tell: data.tell
+                    tell: data.tell,
+                    isAll: data.is_all === 1 ? true : false
                 }
             });
         } catch (error) {

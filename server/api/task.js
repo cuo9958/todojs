@@ -59,7 +59,7 @@ router.post("/detail", valide, async function(ctx, next) {
             to_type,
             tell,
             to_count,
-            is_all: isAll ? 1 : 0
+            is_all: isAll === "true" ? 1 : 0
         };
         if (id && id > 0) {
             await TaskModel.update(model, id);
