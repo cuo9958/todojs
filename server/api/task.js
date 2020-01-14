@@ -1,7 +1,15 @@
 const Router = require("koa-router");
 const TaskModel = require("../models/tasks");
+const SDK = require("@dal/fe_user_sdk/dist/koa");
 
 const router = new Router();
+
+const valide = SDK.simple(ctx => {
+    ctx.body = {
+        code: 0,
+        msg: "请登录"
+    };
+});
 
 router.all("/", function(ctx, next) {
     ctx.body = "不存在的接口";
@@ -9,9 +17,9 @@ router.all("/", function(ctx, next) {
 
 router.get("/list", async function(ctx, next) {
     const { pageIndex, title } = ctx.query;
-    const username = ctx.headers.username;
+    const nickname = decodeURIComponent(ctx.headers.nickname);
     try {
-        const data = await TaskModel.getCount(pageIndex, title, username);
+        const data = await TaskModel.getCount(pageIndex, title, nickname);
         ctx.body = {
             code: 1,
             data
@@ -38,13 +46,14 @@ router.get("/detail", async function(ctx, next) {
         };
     }
 });
-router.post("/detail", async function(ctx, next) {
+router.post("/detail", valide, async function(ctx, next) {
     const { id, title, last_date, last_time, to_type, to_count, tell } = ctx.request.body;
-    const username = ctx.headers.username;
+    const nickname = decodeURIComponent(ctx.headers.nickname);
+
     try {
         const model = {
             title,
-            username,
+            nickname,
             last_date,
             last_time,
             to_type,
@@ -68,7 +77,6 @@ router.post("/detail", async function(ctx, next) {
 });
 router.post("/status", async function(ctx, next) {
     const { id, status } = ctx.request.body;
-    // const username = ctx.headers.username;
     try {
         const model = {
             status
@@ -86,9 +94,9 @@ router.post("/status", async function(ctx, next) {
 });
 router.post("/del", async function(ctx, next) {
     const { id } = ctx.request.body;
-    const username = ctx.headers.username;
+    const nickname = decodeURIComponent(ctx.headers.nickname);
     try {
-        await TaskModel.del(id, username);
+        await TaskModel.del(id, nickname);
         ctx.body = {
             code: 1
         };

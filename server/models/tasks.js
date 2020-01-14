@@ -70,21 +70,20 @@ module.exports = {
             }
         });
     },
-    getCount(limit = 1, title, username) {
+    getCount(limit = 1, title, username = "") {
         let config = {
             limit: 20,
             offset: (limit - 1) * 20,
             order: [["createdAt", "desc"]],
             attributes: ["id", "title", "last_date", "last_time", "to_type", "to_count", "status"],
-            where: {}
+            where: {
+                username
+            }
         };
         if (title) {
             config.where.title = {
                 [Op.like]: "%" + title + "%"
             };
-        }
-        if (username) {
-            config.where.username = username;
         }
 
         return Tasks.findAndCountAll(config);
