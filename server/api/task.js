@@ -64,6 +64,7 @@ router.post("/detail", valide, async function(ctx, next) {
         if (id && id > 0) {
             await TaskModel.update(model, id);
         } else {
+            model.status = 1;
             await TaskModel.insert(model);
         }
         ctx.body = {
