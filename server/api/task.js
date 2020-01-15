@@ -1,6 +1,6 @@
 const Router = require("koa-router");
 const TaskModel = require("../models/tasks");
-const SDK = require("@dal/fe_user_sdk/dist/koa");
+const SDK = require("fe_user_sdk/dist/koa");
 
 const router = new Router();
 

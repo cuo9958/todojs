@@ -1,4 +1,4 @@
-import { factory } from "@dal/fe_user_sdk/dist/react";
+import { factory } from "fe_user_sdk/dist/react";
 
 const sdk = factory({
     baseUrl: "",
